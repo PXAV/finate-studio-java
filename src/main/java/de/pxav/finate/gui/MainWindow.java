@@ -2,7 +2,6 @@ package de.pxav.finate.gui;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import de.pxav.finate.gui.animation.DefaultButtonEffects;
 import de.pxav.finate.gui.component.ModernButton;
 import de.pxav.finate.gui.component.RoundedButtonBorder;
 import de.pxav.finate.gui.theme.ThemeRepository;
@@ -72,7 +71,6 @@ public class MainWindow implements WindowTemplate {
     recordButton.setFont(new Font("Arial", Font.BOLD, 21));
     recordButton.setBorder(buttonBorder);
     recordButton.setBackground(themeRepository.getColor(WindowElement.PRIMARY_BUTTON));
-    recordButton.addMouseListener(new DefaultButtonEffects(recordButton));
     recordButton.setRolloverEnabled(false);
     if (recordButton.getActionListeners().length == 0) {
       recordButton.addActionListener(event -> {
@@ -87,7 +85,6 @@ public class MainWindow implements WindowTemplate {
     settingsButton.setFont(new Font("Arial", Font.BOLD, 21));
     settingsButton.setBorder(buttonBorder);
     settingsButton.setBackground(themeRepository.getColor(WindowElement.PRIMARY_BUTTON));
-    settingsButton.addMouseListener(new DefaultButtonEffects(recordButton));
     settingsButton.setRolloverEnabled(false);
     mainLabel.add(settingsButton);
 
@@ -96,7 +93,6 @@ public class MainWindow implements WindowTemplate {
     aboutButton.setFont(new Font("Arial", Font.BOLD, 21));
     aboutButton.setBorder(buttonBorder);
     aboutButton.setBackground(themeRepository.getColor(WindowElement.PRIMARY_BUTTON));
-    aboutButton.addMouseListener(new DefaultButtonEffects(recordButton));
     aboutButton.setRolloverEnabled(false);
     if (aboutButton.getActionListeners().length == 0) {
       aboutButton.addActionListener(event -> {
@@ -111,7 +107,6 @@ public class MainWindow implements WindowTemplate {
     quitButton.setFont(new Font("Arial", Font.BOLD, 21));
     quitButton.setBorder(buttonBorder);
     quitButton.setBackground(themeRepository.getColor(WindowElement.PRIMARY_BUTTON));
-    quitButton.addMouseListener(new DefaultButtonEffects(recordButton));
     quitButton.setRolloverEnabled(false);
     if (quitButton.getActionListeners().length == 0) {
       quitButton.addActionListener(event -> {
