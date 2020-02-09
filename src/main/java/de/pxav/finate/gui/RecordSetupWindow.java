@@ -32,7 +32,7 @@ import java.util.Date;
  * @author pxav
  */
 @Singleton
-public class RecordSetupWindow {
+public class RecordSetupWindow implements WindowTemplate {
 
   private JFrame jFrame;
   private ThemeRepository themeRepository;
@@ -40,6 +40,7 @@ public class RecordSetupWindow {
   private VideoRecorder videoRecorder;
   private ImageCapture imageCapture;
   private Injector injector;
+  private WindowRepository windowRepository;
 
   private final JLabel mainLabel = new JLabel();
   private final JPanel recordTypeLabel = new JPanel();
@@ -75,16 +76,19 @@ public class RecordSetupWindow {
                            CameraConnection cameraConnection,
                            VideoRecorder videoRecorder,
                            ImageCapture imageCapture,
-                           Injector injector) {
+                           Injector injector,
+                           WindowRepository windowRepository) {
     this.jFrame = jFrame;
     this.themeRepository = themeRepository;
     this.cameraConnection = cameraConnection;
     this.videoRecorder = videoRecorder;
     this.imageCapture = imageCapture;
     this.injector = injector;
+    this.windowRepository = windowRepository;
   }
 
-  public void draw() {
+  @Override
+  public WindowTemplate show() {
     Color backgroundColor = themeRepository.getColor(WindowElement.BACKGROUND);
     Color primaryButtonColor = themeRepository.getColor(WindowElement.PRIMARY_BUTTON);
     Color secondaryButtonColor = themeRepository.getColor(WindowElement.SECONDARY_BUTTON);
@@ -217,8 +221,8 @@ public class RecordSetupWindow {
     backButton.setRolloverEnabled(false);
     if (backButton.getActionListeners().length == 0) {
       backButton.addActionListener(event -> {
-        this.stop();
-        injector.getInstance(MainWindow.class).draw();
+        this.unload();
+        windowRepository.openWindowAndReset(MainWindow.class);
       });
     }
 
@@ -237,9 +241,11 @@ public class RecordSetupWindow {
 
     jFrame.add(mainLabel);
     jFrame.repaint();
+    return this;
   }
 
-  private void updateComponents() {
+  @Override
+  public void updateComponents() {
     title.setLocation((int) (jFrame.getWidth() * 0.01), (int) (jFrame.getWidth() * 0.01));
     title.setSize((int) (jFrame.getWidth() * 0.5), 60);
     title.setFont(new Font("Arial", Font.BOLD, 50));
@@ -529,8 +535,8 @@ public class RecordSetupWindow {
       System.out.println(videoFrameRateSlider.getValue());
       System.out.println(new File(this.filePath.getText() + "/" + videoFileName.getText() + "." + this.videoFileExtension.getSelectedItem()));
       System.out.println(Integer.parseInt(videoRecordDurationInSeconds.getText()));
-      stop();
-      injector.getInstance(RecordingVideoWindow.class).draw();
+      this.unload();
+      windowRepository.openWindowAndReset(RecordingVideoWindow.class);
     } else if (recordType == RecordType.IMAGES) {
       imageCapture.setCameraConnection(cameraConnection);
       imageCapture.setDelayInSeconds(imageRateSlider.getValue());
@@ -540,7 +546,8 @@ public class RecordSetupWindow {
     }
   }
 
-  public void stop() {
+  @Override
+  public void unload() {
     jFrame.remove(mainLabel);
     jFrame.remove(recordTypeLabel);
   }

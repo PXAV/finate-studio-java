@@ -1,7 +1,6 @@
 package de.pxav.finate.gui;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.finate.gui.animation.DefaultButtonEffects;
 import de.pxav.finate.gui.component.ModernButton;
@@ -12,20 +11,21 @@ import de.pxav.finate.gui.theme.WindowElement;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
- * A class description goes here.
+ * This is class represents the main window and
+ * start screen of the application. It helps the user to navigate
+ * through all features like recording, settings, composing, etc.
+ * as well as quitting the program.
  *
  * @author pxav
  */
 @Singleton
-public class MainWindow {
+public class MainWindow implements WindowTemplate {
 
-  private JFrame jFrame;
-  private ThemeRepository themeRepository;
-  private Injector injector;
+  private final JFrame jFrame;
+  private final ThemeRepository themeRepository;
+  private final WindowRepository windowRepository;
 
   private JLabel mainLabel = new JLabel();
   private JLabel title = new JLabel();
@@ -37,13 +37,16 @@ public class MainWindow {
   private ModernButton quitButton = new ModernButton();
 
   @Inject
-  public MainWindow(JFrame jFrame, ThemeRepository themeRepository, Injector injector) {
+  public MainWindow(JFrame jFrame,
+                    ThemeRepository themeRepository,
+                    WindowRepository windowRepository) {
     this.jFrame = jFrame;
     this.themeRepository = themeRepository;
-    this.injector = injector;
+    this.windowRepository = windowRepository;
   }
 
-  public void draw() {
+  @Override
+  public WindowTemplate show() {
     Color backgroundColor = themeRepository.getColor(WindowElement.BACKGROUND);
     Color primaryButtonColor = themeRepository.getColor(WindowElement.BACKGROUND);
     jFrame.getContentPane().setBackground(this.themeRepository.getColor(WindowElement.BACKGROUND));
@@ -57,7 +60,12 @@ public class MainWindow {
     subTitle.setText("STREAM IMAGE DATA FROM YOUR IP CAMERA. SIMPLE.");
     subTitle.setFont(new Font("Arial", Font.PLAIN, 22));
 
-    AbstractBorder buttonBorder = new RoundedButtonBorder(primaryButtonColor, backgroundColor, 3,52);
+    AbstractBorder buttonBorder = new RoundedButtonBorder(
+            primaryButtonColor,
+            backgroundColor,
+            3,
+            52
+    );
 
     recordButton.setText("RECORD");
     recordButton.setForeground(themeRepository.getColor(WindowElement.TEXT));
@@ -68,8 +76,8 @@ public class MainWindow {
     recordButton.setRolloverEnabled(false);
     if (recordButton.getActionListeners().length == 0) {
       recordButton.addActionListener(event -> {
-        this.stop();
-        injector.getInstance(RecordSetupWindow.class).draw();
+        this.unload();
+        windowRepository.openWindowAndReset(RecordSetupWindow.class);
       });
     }
     mainLabel.add(recordButton);
@@ -92,8 +100,8 @@ public class MainWindow {
     aboutButton.setRolloverEnabled(false);
     if (aboutButton.getActionListeners().length == 0) {
       aboutButton.addActionListener(event -> {
-        stop();
-        injector.getInstance(AboutWindow.class).draw();
+        unload();
+        windowRepository.openWindowAndReset(AboutWindow.class);
       });
     }
     mainLabel.add(aboutButton);
@@ -119,8 +127,10 @@ public class MainWindow {
     jFrame.setLayout(null);
     jFrame.repaint();
     jFrame.setVisible(true);
+    return this;
   }
 
+  @Override
   public void updateComponents() {
     title.setLocation((int) (jFrame.getWidth() * 0.1), jFrame.getHeight() / 30);
     title.setSize(jFrame.getWidth(), jFrame.getHeight() / 8);
@@ -141,7 +151,8 @@ public class MainWindow {
     quitButton.setSize(jFrame.getWidth() / 5, 55);
   }
 
-  public void stop() {
+  @Override
+  public void unload() {
     jFrame.remove(mainLabel);
     jFrame.remove(title);
     jFrame.remove(subTitle);

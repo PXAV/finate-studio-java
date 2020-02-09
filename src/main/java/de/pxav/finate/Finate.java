@@ -1,6 +1,5 @@
 package de.pxav.finate;
 
-
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
 import com.google.inject.Guice;
@@ -8,6 +7,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.finate.binder.SimpleBinderModule;
 import de.pxav.finate.gui.MainWindow;
+import de.pxav.finate.gui.WindowRepository;
 import de.pxav.finate.gui.theme.ThemeRepository;
 import de.pxav.finate.gui.theme.WindowTheme;
 
@@ -15,13 +15,18 @@ import javax.swing.*;
 import java.awt.Dimension;
 
 /**
- * A class description goes here.
+ * This is the main class of the Finate project. The main method is
+ * executed on every application startup. It also initializes a shutdown
+ * hook, which is executed on ever application shutdown.
+ *
+ *
  *
  * @author pxav
  */
 @Singleton
 public class Finate {
 
+  // main frame of the project
   private static JFrame mainFrame;
 
   public static void main(String[] args) throws InstantiationException, IllegalAccessException {
@@ -31,6 +36,7 @@ public class Finate {
     mainFrame.setMinimumSize(new Dimension(1024, 576));
     mainFrame.setLocationByPlatform(true);
 
+    // Sets the driver for the camera.
     Webcam.setDriver(new IpCamDriver());
 
     SimpleBinderModule simpleBinderModule = new SimpleBinderModule(mainFrame);
@@ -45,8 +51,10 @@ public class Finate {
     WindowTheme windowTheme = injector.getInstance(ThemeRepository.class).getByName("Light theme");
     injector.getInstance(ThemeRepository.class).changeCurrentTheme(windowTheme);
 
+    injector.getInstance(WindowRepository.class).detectWindows(Finate.class.getPackage().getName());
+
     SwingUtilities.invokeLater(() -> {
-      injector.getInstance(MainWindow.class).draw();
+      injector.getInstance(WindowRepository.class).showWindowAndKeep(MainWindow.class);
     });
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -54,63 +62,4 @@ public class Finate {
     }, "SHUTDOWN_HOOK"));
 
   }
-//
-//  public static void main(String[] args) throws InstantiationException, IllegalAccessException, IOException, InterruptedException {
-//    File file = new File("output.mp4");
-//
-//    IpCamDeviceRegistry.register(new IpCamDevice("DEFAULT", "http://192.168.132.112:8080/video", IpCamMode.PUSH));
-//
-//    IMediaWriter writer = ToolFactory.makeWriter(file.getName());
-//    Dimension size = WebcamResolution.HD720.getSize();
-//
-//    writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_H264, 640, 480);
-//
-//    Webcam webcam = Webcam.getDefault();
-//    webcam.setViewSize(new Dimension(640, 480));
-//    webcam.open(true);
-//
-//    long start = System.currentTimeMillis();
-//
-//    for (int i = 0; i < 50; i++) {
-//
-//      System.out.println("Capture frame " + i);
-//
-//      BufferedImage image = ConverterFactory.convertToType(webcam.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-//      IConverter converter = ConverterFactory.createConverter(image, IPixelFormat.Type.YUV420P);
-//
-//      IVideoPicture frame = converter.toPicture(image, (System.currentTimeMillis() - start) * 1000);
-//      frame.setKeyFrame(i == 0);
-//      frame.setQuality(0);
-//
-//      writer.encodeVideo(0, frame);
-//
-//      // 10 FPS
-//      Thread.sleep(25);
-//    }
-//
-//    writer.close();
-//
-//    System.out.println("Video recorded in file: " + file.getAbsolutePath());
-
-
 }
-
-  /*
-
-  long start = System.currentTimeMillis();
-    BufferedImage image;
-    try {
-
-      URL url = new URL("http://192.168.132.112:8080/photo.jpg");
-      image = ImageIO.read(url);
-      System.out.println("read  " + (System.currentTimeMillis() - start));
-
-      ImageIO.write(image, "png",new File("out.png"));
-      System.out.println("write " + (System.currentTimeMillis() - start));
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    System.out.println("Done");
-    System.out.println("Took " + (System.currentTimeMillis() - start));
-   */
