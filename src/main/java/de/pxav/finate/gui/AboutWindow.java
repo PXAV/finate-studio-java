@@ -17,11 +17,12 @@ import java.awt.*;
  * @author pxav
  */
 @Singleton
-public class AboutWindow {
+public class AboutWindow implements WindowTemplate {
 
   private JFrame jFrame;
   private ThemeRepository themeRepository;
   private Injector injector;
+  private WindowRepository windowRepository;
 
   private JLabel mainLabel = new JLabel();
   private JLabel title = new JLabel();
@@ -33,13 +34,15 @@ public class AboutWindow {
   private JLabel imageContainer = new JLabel(imageIcon);
 
   @Inject
-  public AboutWindow(JFrame jFrame, ThemeRepository themeRepository, Injector injector) {
+  public AboutWindow(JFrame jFrame, ThemeRepository themeRepository, Injector injector, WindowRepository windowRepository) {
     this.jFrame = jFrame;
     this.themeRepository = themeRepository;
     this.injector = injector;
+    this.windowRepository = windowRepository;
   }
 
-  public void draw() {
+  @Override
+  public WindowTemplate show() {
     Color backgroundColor = themeRepository.getColor(WindowElement.BACKGROUND);
     Color primaryButtonColor = themeRepository.getColor(WindowElement.PRIMARY_BUTTON);
     Color secondaryButtonColor = themeRepository.getColor(WindowElement.SECONDARY_BUTTON);
@@ -90,8 +93,8 @@ public class AboutWindow {
     backButton.setRolloverEnabled(false);
     if (backButton.getActionListeners().length == 0) {
       backButton.addActionListener(event -> {
-        this.stop();
-        injector.getInstance(MainWindow.class).draw();
+        this.unload();
+        injector.getInstance(MainWindow.class).show();
       });
     }
     mainLabel.add(backButton);
@@ -102,9 +105,11 @@ public class AboutWindow {
     jFrame.add(informationText);
     jFrame.add(imageContainer);
     jFrame.repaint();
+    return this;
   }
 
-  private void updateComponents() {
+  @Override
+  public void updateComponents() {
     title.setLocation((int) (jFrame.getWidth() * 0.03), jFrame.getHeight() / 30);
     title.setSize(jFrame.getWidth(), jFrame.getHeight() / 15);
 
@@ -119,7 +124,8 @@ public class AboutWindow {
     backButton.setLocation((int) (jFrame.getWidth() * 0.01), jFrame.getHeight());
   }
 
-  public void stop() {
+  @Override
+  public void unload() {
     jFrame.remove(mainLabel);
     jFrame.remove(title);
     jFrame.remove(informationText);

@@ -1,0 +1,21 @@
+# This file is needed for the Travis CI integration.
+#
+# Further reading about building a Travis file for Java projects:
+# https://docs.travis-ci.com/user/languages/java/
+#
+# Author: pxav
+
+# The main language of the project
+language: java
+
+# provide addons in order to install the
+# needed JDKs for testing
+#addons:
+  #apt:
+    #packages:
+     # - oracle-java8-installer
+
+# provide information about the JDKs to
+# test & build the application
+jdk:
+  - openjdk8

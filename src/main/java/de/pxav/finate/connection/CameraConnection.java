@@ -1,17 +1,12 @@
 package de.pxav.finate.connection;
 
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamResolution;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDevice;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
 
 import java.awt.*;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 
 /**
  * A class description goes here.
@@ -25,7 +20,6 @@ public class CameraConnection {
 
   private boolean isConnected = false;
   private Webcam webcam;
-  private DataInputStream dataInputStream;
 
   public CameraConnection() {}
 
@@ -40,7 +34,6 @@ public class CameraConnection {
     IpCamDeviceRegistry.unregisterAll();
     IpCamDeviceRegistry.register(new IpCamDevice("DEFAULT", url, IpCamMode.PUSH));
     this.webcam = Webcam.getDefault();
-    this.webcam.setViewSize(this.resolution);
     this.webcam.open(true);
     this.isConnected = true;
   }

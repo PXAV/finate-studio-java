@@ -26,7 +26,7 @@ import java.util.concurrent.*;
  * @author pxav
  */
 @Singleton
-public class RecordingVideoWindow {
+public class RecordingVideoWindow implements WindowTemplate {
 
   private JFrame jFrame;
   private CameraConnection cameraConnection;
@@ -57,7 +57,8 @@ public class RecordingVideoWindow {
     this.injector = injector;
   }
 
-  public void draw() {
+  @Override
+  public WindowTemplate show() {
     Color backgroundColor = themeRepository.getColor(WindowElement.BACKGROUND);
     Color primaryButtonColor = themeRepository.getColor(WindowElement.PRIMARY_BUTTON);
     Color secondaryButtonColor = themeRepository.getColor(WindowElement.SECONDARY_BUTTON);
@@ -130,6 +131,7 @@ public class RecordingVideoWindow {
     jFrame.repaint();
     System.out.println(Arrays.toString(mainLabel.getComponents()));
     System.out.println(Arrays.toString(jFrame.getRootPane().getComponents()));
+    return this;
   }
 
   private void startInformationTextUpdater() {
@@ -166,12 +168,12 @@ public class RecordingVideoWindow {
             );
 
       if (finishedInPerCent == 100) {
-        stop();
-
+        this.unload();
       }
     }, 0, 10, TimeUnit.MILLISECONDS);
   }
 
+  @Override
   public void updateComponents() {
     webcamPanel.setLocation(mainPaddingLeft(), mainPaddingTop());
     webcamPanel.setSize(jFrame.getWidth() / 3, jFrame.getHeight() / 3);
@@ -186,7 +188,8 @@ public class RecordingVideoWindow {
     jFrame.repaint();
   }
 
-  public void stop() {
+  @Override
+  public void unload() {
     informationTextTask.cancel(true);
     jFrame.remove(mainLabel);
     jFrame.repaint();
