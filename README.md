@@ -1,11 +1,13 @@
+# Important Notice!
+**This project is no longer maintained.**
+
 # Finate Studio
 
-> Developed by pxav, (c) 2019-2020 ![Twitter Follow](https://img.shields.io/twitter/follow/OrigPXAV?style=social) ![GitHub followers](https://img.shields.io/github/followers/PXAV?label=Follow&style=social)
+> Developed by pxav, (c) 2019-2020 ![GitHub followers](https://img.shields.io/github/followers/PXAV?label=Follow&style=social)
 
 [![Build Status](https://travis-ci.org/PXAV/finate-studio-java.svg?branch=master)](https://travis-ci.org/PXAV/finate-studio-java) 
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/finate-studio-java?include_prereleases&label=version)
 ![GitHub issues](https://img.shields.io/github/issues/PXAV/finate-studio-java)
-![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
 
 
 
